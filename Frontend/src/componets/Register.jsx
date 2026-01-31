@@ -3,9 +3,11 @@ import React, { useState } from 'react'
 const Register = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleRegister = async (e) => {
     e.preventDefault()
+    setLoading(true)
 
     try {
       const res = await fetch(
@@ -19,17 +21,19 @@ const Register = () => {
 
       const data = await res.json()
 
-      
+      // Show backend message directly
+      alert(data.message)
+
+      // Redirect only if registration successful
       if (data.message === "User registered successfully") {
-        alert(data.message)
         window.location.href = '/'
-      } else {
-        alert(data.message)
       }
 
     } catch (err) {
       console.error(err)
       alert('Server error. Please try again later.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -56,12 +60,16 @@ const Register = () => {
           required
         />
 
-        <button className="w-full bg-green-600 text-white py-2 rounded">
-          Register
+        <button
+          disabled={loading}
+          className="w-full bg-green-600 text-white py-2 rounded disabled:opacity-50"
+        >
+          {loading ? 'Registering...' : 'Register'}
         </button>
 
         <p className="text-sm text-center mt-3">
-          Already have an account? <a href="/" className="text-blue-600">Login</a>
+          Already have an account?{' '}
+          <a href="/" className="text-blue-600">Login</a>
         </p>
       </form>
     </div>
