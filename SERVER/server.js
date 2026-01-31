@@ -8,10 +8,8 @@ import authRoutes from "./routes/authRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 
 dotenv.config();
+
 const app = express();
-
-await connectDB();
-
 app.use(cors());
 app.use(express.json());
 
@@ -20,17 +18,15 @@ app.get("/", (req, res) => {
 });
 
 // Move DB connect into a route or startup wrapper
-// app.get("/api/health", async (req, res) => {
-//   try {
-//     await connectDB();
-//     res.json({ status: "OK", db: "connected" });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: "DB connect failed" });
-//   }
-// });
-
-
+app.get("/api/health", async (req, res) => {
+  try {
+    await connectDB();
+    res.json({ status: "OK", db: "connected" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "DB connect failed" });
+  }
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
