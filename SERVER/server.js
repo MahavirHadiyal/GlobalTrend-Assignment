@@ -10,7 +10,7 @@ dotenv.config();
 
 const app = express();
 
-// Connect DB once at startup
+
 connectDB().catch((err) => {
   console.error("DB connection failed:", err);
 });

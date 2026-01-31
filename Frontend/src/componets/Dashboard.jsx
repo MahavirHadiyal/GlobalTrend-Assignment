@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Dashboard = () => {
   const [tasks, setTasks] = useState([])
@@ -11,6 +12,7 @@ const Dashboard = () => {
 
   const token = localStorage.getItem('token')
   const BASE_URL = 'https://global-trend-assignment.vercel.app/api/tasks'
+  const navigate = useNavigate();
 
   // Fetch all tasks
   const fetchTasks = async () => {
@@ -123,7 +125,7 @@ const Dashboard = () => {
   // Logout
   const handleLogout = () => {
     localStorage.removeItem('token')
-    window.location.href = '/'
+    navigate('/');
   }
 
   return (
@@ -138,7 +140,7 @@ const Dashboard = () => {
         </button>
       </div>
 
-      {/* Add Task Form */}
+      
       {!editingTask && (
         <form
           onSubmit={handleAddTask}
