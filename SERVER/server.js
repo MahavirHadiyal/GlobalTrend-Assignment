@@ -1,5 +1,4 @@
-
-
+// server.js (top level)
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -8,23 +7,28 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 
-const PORT = 5000;
-
 dotenv.config();
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/',(req,res)=>{
-    
-    res.json("Server is Live");
-})
+app.get("/", (req, res) => {
+  res.json("Server is Live");
+});
 
-await connectDB();
+// Move DB connect into a route or startup wrapper
+app.get("/api/health", async (req, res) => {
+  try {
+    await connectDB();
+    res.json({ status: "OK", db: "connected" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "DB connect failed" });
+  }
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
 
-app.listen(PORT, () =>
-  console.log(`Server running on port ${PORT}`)
-);
+export default app;
