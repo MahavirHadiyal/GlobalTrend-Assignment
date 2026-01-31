@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 const Register = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const navigate = useNavigate() // ✅ hook for navigation
 
   const handleRegister = async (e) => {
     e.preventDefault()
@@ -23,7 +21,7 @@ const Register = () => {
 
       if (res.ok) {
         alert('Registered successfully')
-        navigate('/') // ✅ use navigate instead of window.location.href
+        window.location.href = '/'
       } else {
         alert(data.message || 'Registration failed')
       }

@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const navigate = useNavigate() // ✅ hook for navigation
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -23,7 +21,7 @@ const Login = () => {
 
       if (res.ok && data.token) {
         localStorage.setItem('token', data.token)
-        navigate('/dashboard') // ✅ navigate instead of window.location.href
+        window.location.href = '/dashboard'
       } else {
         alert(data.message || 'Login failed')
       }

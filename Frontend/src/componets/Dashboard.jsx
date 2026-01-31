@@ -1,35 +1,23 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 const Dashboard = () => {
   const [tasks, setTasks] = useState([])
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [editingTask, setEditingTask] = useState(null)
+  const [editingTask, setEditingTask] = useState(null) // for update
   const [editTitle, setEditTitle] = useState('')
   const [editDescription, setEditDescription] = useState('')
   const [editStatus, setEditStatus] = useState('Pending')
 
   const token = localStorage.getItem('token')
-  const BASE_URL = 'https://global-trend-assignment.vercel.app/api/tasks'
-  const navigate = useNavigate();
 
   // Fetch all tasks
   const fetchTasks = async () => {
-    try {
-      const res = await fetch(BASE_URL, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const data = await res.json()
-      if (res.ok) {
-        setTasks(data)
-      } else {
-        alert(data.message || 'Failed to fetch tasks')
-      }
-    } catch (err) {
-      console.error(err)
-      alert('Server error while fetching tasks')
-    }
+    const res = await fetch('http://localhost:5000/api/tasks', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    const data = await res.json()
+    setTasks(data)
   }
 
   useEffect(() => {
@@ -39,27 +27,17 @@ const Dashboard = () => {
   // Add new task
   const handleAddTask = async (e) => {
     e.preventDefault()
-    try {
-      const res = await fetch(BASE_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ title, description, status: 'Pending' }),
-      })
-      const data = await res.json()
-      if (res.ok) {
-        setTitle('')
-        setDescription('')
-        fetchTasks()
-      } else {
-        alert(data.message || 'Failed to add task')
-      }
-    } catch (err) {
-      console.error(err)
-      alert('Server error while adding task')
-    }
+    await fetch('http://localhost:5000/api/tasks', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ title, description, status: 'Pending' }),
+    })
+    setTitle('')
+    setDescription('')
+    fetchTasks()
   }
 
   // Prepare edit
@@ -73,59 +51,38 @@ const Dashboard = () => {
   // Update task
   const handleUpdateTask = async (e) => {
     e.preventDefault()
-    try {
-      const res = await fetch(`${BASE_URL}/${editingTask}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          title: editTitle,
-          description: editDescription,
-          status: editStatus,
-        }),
-      })
-      const data = await res.json()
-      if (res.ok) {
-        setEditingTask(null)
-        setEditTitle('')
-        setEditDescription('')
-        setEditStatus('Pending')
-        fetchTasks()
-      } else {
-        alert(data.message || 'Failed to update task')
-      }
-    } catch (err) {
-      console.error(err)
-      alert('Server error while updating task')
-    }
+    await fetch(`http://localhost:5000/api/tasks/${editingTask}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        title: editTitle,
+        description: editDescription,
+        status: editStatus,
+      }),
+    })
+    setEditingTask(null)
+    setEditTitle('')
+    setEditDescription('')
+    setEditStatus('Pending')
+    fetchTasks()
   }
 
   // Delete task
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this task?')) return
-    try {
-      const res = await fetch(`${BASE_URL}/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const data = await res.json()
-      if (res.ok) {
-        fetchTasks()
-      } else {
-        alert(data.message || 'Failed to delete task')
-      }
-    } catch (err) {
-      console.error(err)
-      alert('Server error while deleting task')
-    }
+    await fetch(`http://localhost:5000/api/tasks/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    fetchTasks()
   }
 
   // Logout
   const handleLogout = () => {
     localStorage.removeItem('token')
-    navigate('/');
+    window.location.href = '/'
   }
 
   return (
@@ -140,7 +97,7 @@ const Dashboard = () => {
         </button>
       </div>
 
-      
+      {/* Add Task Form */}
       {!editingTask && (
         <form
           onSubmit={handleAddTask}
