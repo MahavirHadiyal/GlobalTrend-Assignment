@@ -138,7 +138,7 @@ const Dashboard = () => {
         </button>
       </div>
 
-      {/* Add Task Form */}
+    
       {!editingTask && (
         <form
           onSubmit={handleAddTask}
@@ -164,7 +164,7 @@ const Dashboard = () => {
         </form>
       )}
 
-      {/* Edit Task Form */}
+      
       {editingTask && (
         <form
           onSubmit={handleUpdateTask}
@@ -209,7 +209,7 @@ const Dashboard = () => {
         </form>
       )}
 
-      {/* Task List */}
+      
       <div className="grid gap-4">
         {tasks.length === 0 && <p className="text-gray-500">No tasks yet</p>}
 
