@@ -1,33 +1,39 @@
 import React, { useState } from 'react'
 
 const Login = () => {
-
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   const handleLogin = async (e) => {
     e.preventDefault()
 
-    const res = await fetch('http://localhost:5000/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    })
+    try {
+      const res = await fetch(
+        'https://global-trend-assignment.vercel.app/api/auth/login',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        }
+      )
 
-    const data = await res.json()
+      const data = await res.json()
 
-    if (data.token) {
-      localStorage.setItem('token', data.token)
-      window.location.href = '/dashboard'
-    } else {
-      alert('Login failed')
+      if (res.ok && data.token) {
+        localStorage.setItem('token', data.token)
+        window.location.href = '/dashboard'
+      } else {
+        alert(data.message || 'Login failed')
+      }
+    } catch (err) {
+      console.error(err)
+      alert('Server error. Please try again later.')
     }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form onSubmit={handleLogin} className="bg-white p-6 rounded shadow w-72">
-
         <h2 className="text-xl font-bold text-center mb-4">Login</h2>
 
         <input
@@ -55,7 +61,6 @@ const Login = () => {
         <p className="text-sm text-center mt-3">
           New user? <a href="/register" className="text-blue-600">Register</a>
         </p>
-
       </form>
     </div>
   )

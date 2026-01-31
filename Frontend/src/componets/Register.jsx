@@ -1,27 +1,39 @@
 import React, { useState } from 'react'
 
 const Register = () => {
-
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   const handleRegister = async (e) => {
     e.preventDefault()
 
-    await fetch('http://localhost:5000/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    })
+    try {
+      const res = await fetch(
+        'https://global-trend-assignment.vercel.app/api/auth/register',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        }
+      )
 
-    alert('Registered successfully')
-    window.location.href = '/'
+      const data = await res.json()
+
+      if (res.ok) {
+        alert('Registered successfully')
+        window.location.href = '/'
+      } else {
+        alert(data.message || 'Registration failed')
+      }
+    } catch (err) {
+      console.error(err)
+      alert('Server error. Please try again later.')
+    }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form onSubmit={handleRegister} className="bg-white p-6 rounded shadow w-72">
-
         <h2 className="text-xl font-bold text-center mb-4">Register</h2>
 
         <input
@@ -47,9 +59,8 @@ const Register = () => {
         </button>
 
         <p className="text-sm text-center mt-3">
-          Already have account? <a href="/" className="text-blue-600">Login</a>
+          Already have an account? <a href="/" className="text-blue-600">Login</a>
         </p>
-
       </form>
     </div>
   )
