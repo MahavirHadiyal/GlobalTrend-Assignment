@@ -1,4 +1,3 @@
-// server.js (top level)
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -10,22 +9,17 @@ import taskRoutes from "./routes/taskRoutes.js";
 dotenv.config();
 
 const app = express();
+
+// Connect DB once at startup
+connectDB().catch((err) => {
+  console.error("DB connection failed:", err);
+});
+
 app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
   res.json("Server is Live");
-});
-
-// Move DB connect into a route or startup wrapper
-app.get("/api/health", async (req, res) => {
-  try {
-    await connectDB();
-    res.json({ status: "OK", db: "connected" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "DB connect failed" });
-  }
 });
 
 app.use("/api/auth", authRoutes);
