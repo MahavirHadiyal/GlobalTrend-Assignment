@@ -6,6 +6,11 @@ export const registerUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // basic safety check
+    if (!email || !password) {
+      return res.json({ message: "Email and password required" });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await User.create({
@@ -13,16 +18,20 @@ export const registerUser = async (req, res) => {
       password: hashedPassword,
     });
 
-    res.json({ message: "User registered successfully" });
+    return res.json({ message: "User registered successfully" });
   } catch (error) {
-    console.error(error);
-    res.json({ message: "Registration failed" });
+    console.error("Register error:", error);
+    return res.json({ message: "Registration failed" });
   }
 };
 
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.json({ message: "Email and password required" });
+    }
 
     const user = await User.findOne({ email });
     if (!user) {
@@ -34,14 +43,20 @@ export const loginUser = async (req, res) => {
       return res.json({ message: "Invalid credentials" });
     }
 
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET missing");
+      return res.json({ message: "Server configuration error" });
+    }
+
     const token = jwt.sign(
       { id: user._id },
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
     );
 
-    res.json({ token });
+    return res.json({ token });
   } catch (error) {
-    console.error(error);
-    res.json({ message: "Login failed" });
+    console.error("Login error:", error);
+    return res.json({ message: "Login failed" });
   }
 };
