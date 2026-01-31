@@ -19,12 +19,14 @@ const Register = () => {
 
       const data = await res.json()
 
-      if (res.ok) {
-        alert('Registered successfully')
+      
+      if (data.message === "User registered successfully") {
+        alert(data.message)
         window.location.href = '/'
       } else {
-        alert(data.message || 'Registration failed')
+        alert(data.message)
       }
+
     } catch (err) {
       console.error(err)
       alert('Server error. Please try again later.')
