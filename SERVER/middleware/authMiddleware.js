@@ -6,7 +6,7 @@ const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader)
-    return res.status(401).json({ message: "Access denied" });
+    return res.json({ message: "Access denied" });
 
   const token = authHeader.split(" ")[1];
 
@@ -15,7 +15,7 @@ const authMiddleware = (req, res, next) => {
     req.userId = decoded.id;
     next();
   } catch {
-    res.status(401).json({ message: "Invalid token" });
+    res.json({ message: "Invalid token" });
   }
 };
 
