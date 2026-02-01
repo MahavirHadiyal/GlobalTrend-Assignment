@@ -21,10 +21,10 @@ const Register = () => {
 
       const data = await res.json()
 
-      // Show backend message directly
+    
       alert(data.message)
 
-      // Redirect only if registration successful
+    
       if (data.message === "User registered successfully") {
         window.location.href = '/'
       }

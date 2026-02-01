@@ -48,10 +48,7 @@ export const loginUser = async (req, res) => {
       return res.json({ message: "Invalid credentials" });
     }
 
-    if (!process.env.JWT_SECRET) {
-      console.error("JWT_SECRET missing");
-      return res.json({ message: "Server configuration error" });
-    }
+  
 
     const token = jwt.sign(
       { id: user._id },
